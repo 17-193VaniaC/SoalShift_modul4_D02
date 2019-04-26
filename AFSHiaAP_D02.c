@@ -81,30 +81,42 @@ tatic int xmp_mkdir(const char *path,mode_t mode)
     return 0;
 }
 
-static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
-		    struct fuse_file_info *fi)
-{
-	int fd;
+static int xmp_read(const char *path, char *buf, size_t size, off_t offset,struct fuse_file_info *fi){
 	int res;
 
 	(void) fi;
-	fd = open(path, O_RDONLY);
-	if (fd == -1)
-		return -errno;
-
+	
 	res = pread(fd, buf, size, offset);
 	if (res == -1)
 		res = -errno;
 
-	close(fd);
 	return res;
 }
+static int xmp_chmod(const char *path, mode_t mode){
+        int res;
+        if(strncmp(path,"/home/cikei/shift4/YOUTUBE",25)==0){//nama folder dari file system
+                if(strstr(fpath, ".iz1") != NULL) == 0){
+                printf("File berekstensi iz1 tidak boleh diubah permissionnya\n");
+                        return -errno;
+        }
+        else{
+                res = chmod(fpath,mode);
+        }
+        res = chmod(path, mode);
+        if (res == -1)
+                return -errno;
+
+        return 0;
+}
+
+
 
 static struct fuse_operations xmp_oper = {
         .getattr        = xmp_getattr,
         .mkdir          = xmp_mkdir,
         .readdir        = xmp_readdir,
         .read           = xmp_read,
+	.chmod		= xmp_chmod
 };
 
 int main(int argc, char *argv[])
