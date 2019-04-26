@@ -51,7 +51,28 @@ Jika ditemukan file dengan spesifikasi tersebut ketika membuka direktori, Atta a
 Pada folder YOUTUBER, setiap membuat folder permission foldernya akan otomatis menjadi 750. Juga ketika membuat file permissionnya akan otomatis menjadi 640 dan ekstensi filenya akan bertambah “.iz1”. File berekstensi “.iz1” tidak bisa diubah permissionnya dan memunculkan error bertuliskan “File ekstensi iz1 tidak boleh diubah permissionnya.”
 
 ** Solusi **
+Karena ingin membuat folder dengan permission yang berada di folder YOUTUBE, maka yang dilakukan adalah membandingkan folder path yang akan dibuat. sehingga, jika folder tersebut berada di dalam folder YOUTUBE, maka permissionnya akan menjado 750.
+```
+static int xmp_mkdir(const char *path,mode_t mode)
+{
+    int res;
+    char fpath[1000];
 
+    sprintf(fpath,"%s%s",dirpath,path);
+    if(strncmp(fpath,"/home/cikei/shift4/YOUTUBE",20) == 0){  //jika alamat dari folder yang dibuat berada di folder YOUTUBE
+                res = mkdir(fpath, 0750);
+        }
+        else{
+                res = mkdir(fpath, mode);
+        }
+
+        if(res == -1)
+        return -errno;
+
+
+    return 0;
+}
+```
 ---
 
 ### Soal  5
