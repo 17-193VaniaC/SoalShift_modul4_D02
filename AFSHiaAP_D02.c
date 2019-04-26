@@ -1,4 +1,4 @@
-define FUSE_USE_VERSION 28
+#define FUSE_USE_VERSION 28
 #include <fuse.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -63,46 +63,53 @@ static int xmp_getattr(const char *path, struct stat *stbuf)
         return 0;
 }
 
-tatic int xmp_mkdir(const char *path,mode_t mode)
+static int xmp_mkdir(const char *path,mode_t mode)
 {
     int res;
     char fpath[1000];
+
     sprintf(fpath,"%s%s",dirpath,path);
-	if(strncmp(path,"/home/cikei/shift4/YOUTUBE",25)==0){//nama folder dari file system
-		res=mkdir(path, 0750);
+	if(strncmp(fpath,"/home/cikei/shift4/YOUTUBE",20) == 0){
+		res = mkdir(fpath, 0750);
 	}
 	else{
-		res = mkdir (fpath,mode);
+		res = mkdir(fpath, mode);
 	}
-    if(res == -1)
+
+        if(res == -1)
         return -errno;
 
-    
+
     return 0;
 }
 
 static int xmp_read(const char *path, char *buf, size_t size, off_t offset,struct fuse_file_info *fi){
 	int res;
 
-	(void) fi;
-	
-	res = pread(fd, buf, size, offset);
+	(void) path;
+
+	res = pread(fi->fh, buf, size, offset);
 	if (res == -1)
 		res = -errno;
 
 	return res;
 }
+
 static int xmp_chmod(const char *path, mode_t mode){
         int res;
+
         if(strncmp(path,"/home/cikei/shift4/YOUTUBE",25)==0){//nama folder dari file system
-                if(strstr(fpath, ".iz1") != NULL) == 0){
-                printf("File berekstensi iz1 tidak boleh diubah permissionnya\n");
+                if(strstr(path, ".iz1") != NULL){
+	                printf("File berekstensi iz1 tidak boleh diubah permissionnya\n");
                         return -errno;
-        }
-        else{
-                res = chmod(fpath,mode);
-        }
-        res = chmod(path, mode);
+        	}
+        	else{
+                	res = chmod(path,mode);
+        	}
+	}
+	else{
+	        res = chmod(path, mode);
+	}
         if (res == -1)
                 return -errno;
 
