@@ -14,6 +14,55 @@ Perhatian: Karakter ‘/’ adalah karakter ilegal dalam penamaan file atau fold
 
 ** Solusi **
 
+Soal ini dikerjakan dengan membuat fungsi untuk mengenkripsi dan mendekripsi. Fungsi `encrypt` dibuat dengan menggeser setiap huruf ci paths sebanyak 17 karakter pada character list. Saat program menemukan karakter '/' pada paths, maka program akan mengabaikan karakter tersebut. Sama dengan fungsi `encrypt`, fungsi `decrypt` hanya mengubah arah geser huruf ke kiri.  
+
+``` c
+void encrypt(char paths[])
+{
+    int i, j;
+    char huruf;
+    for(i=0; i<strlen(paths); i++)
+    {
+        huruf = paths[i];
+        if(huruf == '/') continue;
+
+        for(j=0; j<strlen(charlist); j++)
+        {
+            if(huruf==charlist[j]) break;
+        }
+        j=j+17;
+        if(i>93)
+        {
+            j=j-strlen(charlist);
+        }
+        
+        paths[i]=charlist[j];
+    }
+}
+
+void decrypt(char paths[])
+{
+    int i, j;
+    char huruf;
+    for(i=0; i<strlen(paths); i++)
+    {
+        huruf=paths[i];
+        if(huruf == '/') continue;
+
+        for(j=0; j<strlen(charlist); j++)
+        {
+            if(huruf==charlist[j]) break;
+        }
+        j=j-17;
+        if(j<0)
+        {
+            j=j+strlen(charlist);
+        } 
+        paths[i]=charlist[j];
+    }
+}
+```
+
 ---
 
 ### Soal 2
@@ -51,8 +100,9 @@ Jika ditemukan file dengan spesifikasi tersebut ketika membuka direktori, Atta a
 Pada folder YOUTUBER, setiap membuat folder permission foldernya akan otomatis menjadi 750. Juga ketika membuat file permissionnya akan otomatis menjadi 640 dan ekstensi filenya akan bertambah “.iz1”. File berekstensi “.iz1” tidak bisa diubah permissionnya dan memunculkan error bertuliskan “File ekstensi iz1 tidak boleh diubah permissionnya.”
 
 ** Solusi **
+
 Karena ingin membuat folder dengan permission yang berada di folder YOUTUBE, maka yang dilakukan adalah membandingkan folder path yang akan dibuat. sehingga, jika folder tersebut berada di dalam folder YOUTUBE, maka permissionnya akan menjado 750.
-```
+```c
 static int xmp_mkdir(const char *path,mode_t mode)
 {
     int res;
