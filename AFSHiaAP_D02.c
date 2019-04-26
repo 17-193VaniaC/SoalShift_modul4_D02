@@ -68,11 +68,11 @@ tatic int xmp_mkdir(const char *path,mode_t mode)
     int res;
     char fpath[1000];
     sprintf(fpath,"%s%s",dirpath,path);
-	if(strncmp(path,"/home/cikei/AFSHiaAP/YOUTUBE",22)){//nama folder dari file system
+	if(strncmp(path,"/home/cikei/shift4/YOUTUBE",25)==0){//nama folder dari file system
 		res=mkdir(path, 0750);
 	}
 	else{
-    res = mkdir (fpath,mode);
+		res = mkdir (fpath,mode);
 	}
     if(res == -1)
         return -errno;
