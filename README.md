@@ -1,5 +1,10 @@
 # SoalShift_modul4_D02
 
+#### Anggota Kelompok D02
+1. Alifiannisa A. W.    (05111740000011)
+2. Vania Cikanindi      (05111740000193)
+---
+
 ### Soal 1
 
 
