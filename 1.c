@@ -1,4 +1,15 @@
 #define FUSE_USE_VERSION 28
+#define HAVE_SETXATTR
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#ifdef linux
+/* For pread()/pwrite() */
+#define _XOPEN_SOURCE 500
+#endif
+
 #include <fuse.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,6 +36,25 @@ static int xmp_getattr(const char *path, struct stat *stbuf)
 
 	return 0;
 }
+
+static int xmp_open(const char *path, struct fuse_file_info *fi)
+{
+        int res;
+char fpath[1000];
+        if(strcmp(path,"/") == 0)
+        {
+                path=dirpath;
+                sprintf(fpath,"%s",path);
+        }
+        else sprintf(fpath, "%s%s",dirpath,path);
+        res = open(fpath, fi->flags);
+        if (res == -1)
+                return -errno;
+
+        close(res);
+        return 0;
+}
+
 
 static int xmp_mkdir(const char *path,mode_t mode){
     int res;
@@ -101,7 +131,7 @@ static int xmp_write(const char *path, const char *buf, size_t size, off_t offse
 	close(fd);
 	return res;
 }
-
+/*
 static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 		    struct fuse_file_info *fi)
 {
@@ -161,29 +191,54 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 	close(fd);
 	return res;
 }
-
+*/
 static int xmp_chmod(const char *path, mode_t mode){
 	int res;
 	char fpath[1000];
 	sprintf(fpath, "%s%s",dirpath,path);
-	if(strncmp(fpath,"/home/cikei/shift4/YOUTUBE",25)==0){
+	if(strncmp(fpath,"/home/cikei/shift4/YOUTUBER",25)==0){
 	        if(strstr(fpath, ".iz1") != NULL){
-			perror("File berekstensi iz1 tidak boleh diubah permissionnya\n");
-			return -errno;
+			printf("\nFile berekstensi iz1 tidak boleh diubah permissionnya\n");
+			return 0;
 		}
 	else{
-res = chmod(path, mode);
-return 0;
-
-}
+		res = chmod(fpath, mode);
+		printf("bisa terchmod");
+          	return 0;}
 	}
 
-	res = chmod(path, mode);
+	res = chmod(fpath, mode);
 	if(res == -1){
 		return -errno;}
 
 	return 0;
 }
+
+static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
+                    struct fuse_file_info *fi)
+{
+        int fd;
+        int res;
+        char fpath[1000];
+        if(strcmp(path,"/") == 0)
+        {
+                path=dirpath;
+                sprintf(fpath,"%s",path);
+        }
+        else sprintf(fpath, "%s%s",dirpath,path);
+        (void) fi;
+        fd = open(fpath, O_RDONLY);
+        if (fd == -1)
+                return -errno;
+
+        res = pread(fd, buf, size, offset);
+        if (res == -1)
+                res = -errno;
+
+        close(fd);
+        return res;
+}
+/*
 
 static int xmp_open(const char *path, struct fuse_file_info *fi)
 {
@@ -196,7 +251,7 @@ static int xmp_open(const char *path, struct fuse_file_info *fi)
 	close(res);
 	return 0;
 }
-
+*/
 static struct fuse_operations xmp_oper = {
 	.getattr	= xmp_getattr,
 	.readdir	= xmp_readdir,
@@ -205,6 +260,7 @@ static struct fuse_operations xmp_oper = {
 	.open		= xmp_open,
 	.write		= xmp_write,
 	.chmod		= xmp_chmod
+
 };
 
 int main(int argc, char *argv[])
