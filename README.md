@@ -114,7 +114,7 @@ static int xmp_mkdir(const char *path,mode_t mode)
     char fpath[1000];
 
     sprintf(fpath,"%s%s",dirpath,path);
-    if(strncmp(fpath,"/home/cikei/shift4/YOUTUBE",20) == 0){  //jika alamat dari folder yang dibuat berada di folder YOUTUBE
+    if(strncmp(fpath,"/home/cikei/shift4/YOUTUBER",20) == 0){  //jika alamat dari folder yang dibuat berada di folder YOUTUBE
                 res = mkdir(fpath, 0750);
         }
         else{
@@ -128,6 +128,33 @@ static int xmp_mkdir(const char *path,mode_t mode)
     return 0;
 }
 ```
+Supaya file berekstensi iz1 dalam folder YOUTUBER tidak bisa diganti permissionnya, maka dilakukan perubahan dalam fungsi xmp_chmod seperti berikut.
+```
+static int xmp_chmod(const char *path, mode_t mode){
+        int res;
+        char fpath[1000];
+        sprintf(fpath, "%s%s",dirpath,path);
+        if(strncmp(fpath,"/home/cikei/shift4/YOUTUBER",25)==0){
+                if(strstr(fpath, ".iz1") != NULL){
+                        printf("\nFile berekstensi iz1 tidak boleh diubah permissionnya\n");
+                        return 0;
+                }
+        else{
+                res = chmod(fpath, mode);
+                return 0;}
+        }
+
+        res = chmod(fpath, mode);
+        if(res == -1){
+                return -errno;}
+
+        return 0;
+}
+
+```
+Selain itu, agar file yang dibuat memiliki permission 640, maka fungsi yang dibutuhkan adalah sebagai berikut.
+
+
 ---
 
 ### Soal  5
